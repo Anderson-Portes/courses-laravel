@@ -1,0 +1,199 @@
+@extends("layouts.app") 
+@section('content')
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5>Criar Novo Aluno</h5>
+          <a href="{{ url('alunos') }}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Voltar
+          </a>
+        </div>
+        <div class="card-body">
+          @if ($errors->any()) 
+            @foreach ($errors->all() as $item)
+              <p class="text-danger">{{ $item }}</p>
+            @endforeach 
+          @endif
+
+          @if (session()->has('success'))
+            <div class="alert alert-success">
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+              {{ session()->get('success') }}
+            </div>
+          @endif
+          <form
+            action="{{ url('alunos') }}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            @csrf
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                required
+                placeholder="Nome"
+                value="{{ old('name') }}"
+              />
+              <label for="name">Nome</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+                placeholder="Email"
+                value="{{ old('email') }}"
+              />
+              <label for="email">Email</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="cpf"
+                name="cpf"
+                required
+                minlength="11"
+                maxlength="11"
+                placeholder="phone"
+                value="{{ old('cpf') }}"
+              />
+              <label for="cpf">CPF</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="phone"
+                name="phone"
+                placeholder="phone"
+                value="{{ old('phone') }}"
+              />
+              <label for="phone">Celular</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="telephone"
+                name="telephone"
+                placeholder="telephone"
+                value="{{ old('telephone') }}"
+              />
+              <label for="telephone">Telefone</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="company"
+                name="company"
+                autocomplete="company"
+                placeholder="Empresa"
+                value="{{ old('company') }}"
+              />
+              <label for="company">Empresa</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+                autocomplete="new-password"
+                placeholder="Senha"
+              />
+              <label for="password">Senha</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="password"
+                class="form-control"
+                id="password-confirm"
+                name="password_confirmation"
+                required
+                autocomplete="new-password"
+                placeholder="Confirme Senha"
+              />
+              <label for="password-confirm">Confirme Senha</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="cep"
+                name="cep"
+                required
+                autocomplete="new-password"
+                placeholder="CEP"
+                maxlength="8"
+                value="{{ old('cep') }}"
+              />
+              <label for="password-confirm">CEP</label>
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" name="city" class="form-control" placeholder="Cidade" required value="{{ old('city') }}">
+              <input type="text" name="state" maxlength="2" minlength="2" placeholder="Estado" class="form-control" required
+                value="{{ old('state') }}">
+              <input type="text" name="district" class="form-control" placeholder="Bairro" required
+                value="{{ old('district') }}">
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" name="complement" class="form-control" required placeholder="Logradouro"
+                value="{{ old('complement') }}">
+              <input type="text" name="number" class="form-control" required placeholder="Número"
+                value="{{ old('number') }}">
+            </div>
+            <div class="input-group mb-2">
+              <label class="input-group-text" for="course_id">Cursos</label>
+              <select class="form-select" id="course_id" required name="course_id">
+                @foreach ($courses as $item)
+                  <option value="{{ $item->id }}">{{ $item->name }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="input-group mb-2">
+              <label class="input-group-text" for="category">Categoria</label>
+              <select class="form-select" id="category" required name="category">
+                <option value="Estudante">Estudante</option>
+                <option value="Profissional">Profissional</option>
+                <option value="Associado">Associado</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar Aluno</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const cepInput = document.getElementById('cep')
+
+  cepInput.onkeyup = async () => {
+    const cepValue = cepInput.value
+    if(cepValue.length === 8) {
+      const data = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
+      const json = await data.json()
+      console.log(json)
+      document.querySelector('input[name=state]').value = json.uf
+      document.querySelector('input[name=city]').value = json.localidade
+      document.querySelector('input[name=district]').value = json.bairro
+      document.querySelector("input[name=complement]").value = json.logradouro
+    }
+  }
+</script>
+@endsection
