@@ -79,5 +79,31 @@ class DatabaseSeeder extends Seeder
             'current_subscribers' => 0,
             'file_name' => '/storage/files/Arquivo.pdf'
         ]);
+
+        Address::factory()->create([
+            'state' => 'SP',
+            'city' => 'Cubatão',
+            'district' => 'Vila Natal',
+            'complement' => 'Rua das azaléias',
+            'number' => '133',
+            'cep' => '11538060'
+        ]);
+
+        User::factory()->create([
+            'name' => 'Anderson Portes do Nascimento',
+            'email' => 'andersonportes@email.com',
+            'type' => 'Usuário'
+        ]);
+
+        Student::factory()->create([
+            'cpf' => '50711013861',
+            'telephone' => '+5513996918000',
+            'phone' => '+5513996918000',
+            'company' => 'Etec Doutora Ruth Cardoso',
+            'address_id' => 1,
+            'user_id' => 2,
+            'category' => 'Estudante',
+            'paid_out' => false
+        ]);
     }
 }

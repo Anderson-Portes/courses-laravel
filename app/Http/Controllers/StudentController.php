@@ -67,7 +67,6 @@ class StudentController extends Controller
             'cep' => 'required|numeric|min:8',
             'cpf' => 'required|cpf|unique:students',
             'category' => 'required',
-            'courses' => 'required'
         ]);
 
         $allData = $request->all();
@@ -84,6 +83,11 @@ class StudentController extends Controller
         $allData['address_id'] = $newAddress->id;
 
         $student = Student::create($allData);
+
+        if (!isset($allData['courses'])) {
+            $allData['courses'] = [];
+        }
+
         $student->courses()->attach($allData['courses']);
 
         foreach ($student->courses as $course) {
@@ -145,7 +149,6 @@ class StudentController extends Controller
             'city' => 'required|string',
             'district' => 'required|string',
             'number' => 'required|string',
-            'courses' => 'required',
             'category' => 'required'
         ]);
 
@@ -156,7 +159,11 @@ class StudentController extends Controller
         }
 
         $allData = $request->all();
-        $allData['password'] = isset($allData['password']) ? Hash::make($allData['password']) : null;
+        $allData['password'] = isset($allData['password']) ? Hash::make($allData['password']) : $student->user->password;
+
+        if (!isset($allData['courses'])) {
+            $allData['courses'] = [];
+        }
 
         $emailExists = User::firstWhere("email", $allData['email']);
         $cpfExists = Student::firstWhere("cpf", $allData['cpf']);

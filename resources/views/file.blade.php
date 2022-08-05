@@ -29,7 +29,16 @@
           <td>{{ $item->user->email }}</td>
           <td>{{ $item->address->state }}</td>
           <td class="row-status">Não pago</td>
-          <td>R$ {{ $item->course->price }}</td>
+          <td>
+            R$
+            @php
+              $price = 0;
+              foreach ($item->courses as $course) {
+                $price += $course->price;
+              }
+              echo $price;
+            @endphp
+          </td>
         </tr>
         @empty
         <tr>
