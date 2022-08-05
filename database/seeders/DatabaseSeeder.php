@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'start_date' => '2022-08-01',
             'end_date' => '2022-08-15',
             'subscribers_quantity' => 32,
-            'current_subscribers' => 1,
+            'current_subscribers' => 0,
             'file_name' => '/storage/files/Arquivo.pdf'
         ]);
 
@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'start_date' => '2022-08-10',
             'end_date' => '2022-08-20',
             'subscribers_quantity' => 38,
-            'current_subscribers' => 1,
+            'current_subscribers' => 0,
             'file_name' => '/storage/files/Arquivo.pdf'
         ]);
 
@@ -78,49 +78,6 @@ class DatabaseSeeder extends Seeder
             'subscribers_quantity' => 50,
             'current_subscribers' => 0,
             'file_name' => '/storage/files/Arquivo.pdf'
-        ]);
-
-        User::factory()->create([
-            'name' => 'Anderson Portes',
-            'email' => 'aluno@email.com',
-            'type' => 'Usuário',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Pedro Henrique',
-            'email' => 'pedro@email.com',
-            'type' => 'Usuário',
-        ]);
-
-        Address::factory()->create([
-            'state' => 'SP',
-            'city' => 'Cubatão',
-            'district' => 'Vila Natal',
-            'number' => '133',
-            'complement' => 'Rua das azaléias',
-            'cep' => '11538060'
-        ]);
-
-        Student::factory()->create([
-            'cpf' => '50711013861',
-            'phone' => '+55 (13) 99691-8000',
-            'telephone' => '+55 (13) 99691-8000',
-            'company' => 'ETEC DRC',
-            'address_id' => 1,
-            'user_id' => 2,
-            'course_id' => 1,
-            'category' => 'Estudante'
-        ]);
-
-        Student::factory()->create([
-            'cpf' => '50788284202',
-            'phone' => '+55 (13) 99691-8000',
-            'telephone' => '+55 (13) 99691-8000',
-            'company' => 'ETEC DRC',
-            'address_id' => 1,
-            'user_id' => 3,
-            'course_id' => 2,
-            'category' => 'Estudante'
         ]);
     }
 }

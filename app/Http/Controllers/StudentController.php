@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
@@ -63,15 +64,16 @@ class StudentController extends Controller
             'district' => 'required|string',
             'complement' => 'required|string',
             'number' => 'required|string',
-            'course_id' => 'required',
             'cep' => 'required|numeric|min:8',
             'cpf' => 'required|cpf|unique:students',
-            'category' => 'required'
+            'category' => 'required',
+            'courses' => 'required'
         ]);
 
         $allData = $request->all();
 
-
+        $allData['email_verified_at'] = now();
+        $allData['password'] = Hash::make($allData['password']);
         $allData['type'] = "Usuário";
 
         $user = User::create($allData);
@@ -81,11 +83,13 @@ class StudentController extends Controller
 
         $allData['address_id'] = $newAddress->id;
 
-        Student::create($allData);
+        $student = Student::create($allData);
+        $student->courses()->attach($allData['courses']);
 
-        $course = Course::find($allData['course_id']);
-        $course->current_subscribers = $course->current_subscribers + 1;
-        $course->update();
+        foreach ($student->courses as $course) {
+            $course->current_subscribers++;
+            $course->update();
+        }
 
         return back()->with('success', 'Aluno adicionado com sucesso!');
     }
@@ -131,7 +135,7 @@ class StudentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8|confirmed',
             'cpf' => 'required|cpf',
             'phone' => 'required|min:9',
             'telephone' => 'required|min:8',
@@ -141,7 +145,7 @@ class StudentController extends Controller
             'city' => 'required|string',
             'district' => 'required|string',
             'number' => 'required|string',
-            'course_id' => 'required',
+            'courses' => 'required',
             'category' => 'required'
         ]);
 
@@ -152,9 +156,10 @@ class StudentController extends Controller
         }
 
         $allData = $request->all();
+        $allData['password'] = isset($allData['password']) ? Hash::make($allData['password']) : null;
 
-        $emailExists = User::where("email", $allData['email'])->first();
-        $cpfExists = Student::where("cpf", $allData['cpf'])->first();
+        $emailExists = User::firstWhere("email", $allData['email']);
+        $cpfExists = Student::firstWhere("cpf", $allData['cpf']);
 
         if ($emailExists && $emailExists->id != $student->user_id) {
             return back()->withErrors(['Email indisponível.']);
@@ -164,16 +169,19 @@ class StudentController extends Controller
             return back()->withErrors(['CPF Indísponível.']);
         }
 
-        if ($allData['course_id'] != $student->course_id) {
-            if (isset($student->course))
-                $student->course->update(
-                    ['current_subscribers' => $student->course->current_subscribers - 1]
-                );
+        //Diminuindo o valor de inscritos atuais nos cursos do usuário
+        foreach ($student->courses as $course) {
+            $course->update(['current_subscribers' => $course->current_subscribers - 1]);
+        }
 
-            $newCourse = Course::find($allData['course_id']);
-            $newCourse->update(
-                ['current_subscribers' => $newCourse->current_subscribers + 1]
-            );
+        //Restando os cursos do usuário
+        $student->courses()->detach();
+        $student->courses()->attach($allData['courses']);
+
+        //Adicionando mais um inscrito nos novos cursos do usuário
+        foreach ($allData['courses'] as $newCourseId) {
+            $newCourse = Course::find($newCourseId);
+            $newCourse->update(['current_subscribers' => $newCourse->current_subscribers + 1]);
         }
 
         $student->update($allData);
@@ -194,9 +202,10 @@ class StudentController extends Controller
         $student = Student::find($id);
 
         if ($student) {
-            $course = Course::find($student->course_id);
-            $course->current_subscribers = $course->current_subscribers - 1;
-            $course->update();
+            foreach ($student->courses as $course) {
+                $course->update(['current_subscribers' => $course->current_subscribers - 1]);
+            }
+
             User::destroy($student->user_id);
         }
 

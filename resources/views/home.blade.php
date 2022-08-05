@@ -8,31 +8,30 @@
         <div class="card-body">
           @if (Auth::user()->type === "Usuário")
             <p>
-              Você {{ Auth::user()->student->category }}, {{ Auth::user()->name }} está inscrito no curso
-              "{{ Auth::user()->student->course->name }}"
+              Você {{ Auth::user()->student->category }}, {{ Auth::user()->name }} está inscrito nos seguintes cursos:
             </p>
-            <p class="fw-bold">Descrição do curso:</p>
-            <p>
-              {{ Auth::user()->student->course->description }}
-            </p>
-            <p class="fw-bold">Valor: R$ {{ Auth::user()->student->course->price }}</p>
-            @if (Auth::user()->student->paid_out)
-              <a 
-                href="{{ asset(Auth::user()->student->course->file_name) }}"
-                class="d-block"
-                target="blank"
-              >
-                Acessar material do curso
-              </a>
-            @else
-              <p class="text-danger fw-bold fs-6">Realize o pagamento para acessar o material do curso</p>
+            @forelse (Auth::user()->student->courses as $item)
+              <h3>{{ $item->name }}</h3>
+              <h5>Descrição: </h5>
+              <p>{{ $item->description }}</p>
+              <p>Valor: R$ {{ $item->price }}</p>
+              @if (Auth::user()->student->paid_out)
+                <a href="{{ asset($item->file_name) }}" class="btn btn-sm btn-primary">
+                  Acessar material do curso
+                </a>
+              @endif
+            @empty
+              <p class="text-danger">Você não está inscrito em nenhum curso</p>  
+            @endforelse
+            @if (!Auth::user()->student->paid_out)
+              <p class="text-danger fw-bold fs-6">Realize o pagamento para acessar o material do cursos</p>
               <a 
                 class="btn btn-primary mt-2"
                 href="{{ route('boleto') }}"
                 target="blank"
               >
                 Pagar via boleto
-              </a>
+              </a>  
             @endif
           @else
             <a href="{{ url('cursos') }}" class="btn btn-primary">

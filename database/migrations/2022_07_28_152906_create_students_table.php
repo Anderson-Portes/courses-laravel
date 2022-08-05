@@ -23,7 +23,6 @@ return new class extends Migration
             $table->boolean('paid_out')->default(false);
             $table->foreignId('address_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('course_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

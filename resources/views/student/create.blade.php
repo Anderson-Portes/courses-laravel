@@ -159,7 +159,7 @@
             </div>
             <div class="input-group mb-2">
               <label class="input-group-text" for="course_id">Cursos</label>
-              <select class="form-select" id="course_id" required name="course_id">
+              <select class="form-select" id="course_id" required name="courses[]" multiple="">
                 @foreach ($courses as $item)
                   <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach

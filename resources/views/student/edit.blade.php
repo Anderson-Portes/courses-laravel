@@ -113,10 +113,8 @@
                 class="form-control"
                 id="password"
                 name="password"
-                required
                 autocomplete="new-password"
                 placeholder="Senha"
-                value="{{ $student->user->password }}"
               />
               <label for="password">Senha</label>
             </div>
@@ -126,10 +124,8 @@
                 class="form-control"
                 id="password-confirm"
                 name="password_confirmation"
-                required
                 autocomplete="new-password"
                 placeholder="Confirme Senha"
-                value="{{ $student->user->password }}"
               />
               <label for="password-confirm">Confirme Senha</label>
             </div>
@@ -163,7 +159,7 @@
             </div>
             <div class="input-group mb-2">
               <label class="input-group-text" for="course_id">Cursos</label>
-              <select class="form-select" id="course_id" required name="course_id">
+              <select class="form-select" id="course_id" required name="courses[]" multiple="">
                 @foreach ($courses as $item)
                   <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach

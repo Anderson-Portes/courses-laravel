@@ -57,7 +57,16 @@
                       </button>
                     </form>
                   </td>
-                  <td>R$ {{ $item->course->price }}</td>
+                  <td>
+                    R$
+                    @php
+                      $price = 0;
+                      foreach ($item->courses as $course) {
+                        $price += $course->price;
+                      } 
+                      echo $price;
+                    @endphp
+                  </td>
                   <td>
                     <a href="{{ url('alunos/'.$item->id.'/edit') }}" class="btn btn-sm btn-outline-success">
                       <i class="bi bi-pencil-square"></i>

@@ -20,7 +20,11 @@ class PaymentController extends Controller
 
     public function paymentViaTicket()
     {
-        $description = "Pagamento do curso " . Auth::user()->student->course->name . " no valor de R$ " . Auth::user()->student->course->price;
+        $price = 0;
+        foreach (Auth::user()->student->courses as $course) {
+            $price += $course->price;
+        }
+        $description = "Pagamento dos cursos no valor de R$ " . $price;
         $json = Http::withHeaders([
             "Authorization" => "0D84518F5F6B4EC0B5DB5565938FF0F4",
             "Content-Type" => "application/json"
@@ -28,13 +32,13 @@ class PaymentController extends Controller
             'reference_id' => sha1(rand(0, time()) . time()),
             'description' =>  $description,
             'amount' => [
-                'value' => Auth::user()->student->course->price * 100,
+                'value' => $price,
                 'currency' => 'BRL'
             ],
             'payment_method' => [
                 'type' => 'BOLETO',
                 'boleto' => [
-                    'due_date' => Auth::user()->student->course->end_date,
+                    'due_date' => '2022-12-30',
                     'holder' => [
                         'name' => Auth::user()->name,
                         'email' => Auth::user()->email,
