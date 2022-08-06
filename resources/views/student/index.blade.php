@@ -55,6 +55,15 @@
                   </td>
                   <td>
                     R$
+                    @php
+                      $price = 0;
+                      foreach ($item->purchases as $purchase) {
+                        if($purchase->paid_out) {
+                          $price += $purchase->purchase_price;
+                        }
+                      }
+                      echo $price;
+                    @endphp
                   </td>
                   <td>
                     <a href="{{ url('alunos/'.$item->id.'/edit') }}" class="btn btn-sm btn-outline-success">

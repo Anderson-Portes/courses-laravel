@@ -42,11 +42,11 @@
               <th></th>
             </thead>
             <tbody>
-              @forelse ($student->purchases as $purchase)
+              @forelse ($student->purchases->sortDesc() as $purchase)
                 <tr>
                   <td>{{ $purchase->course->name }}</td>
                   <td>R$ {{ $purchase->course->price }}</td>
-                  <td>R$ {{ $purchase->price }}</td>
+                  <td>R$ {{ $purchase->purchase_price }}</td>
                   <td>
                     <form action="{{ route('student.purchases.update', $purchase->id) }}" method="post">
                       @csrf
@@ -60,7 +60,11 @@
                     {{ $purchase->created_at->format('d/m/Y') }}
                   </td>
                   <td>
-                    {{ $purchase->updated_at->format('d/m/Y') }}
+                    @if ($purchase->purchase_date)
+                      {{ date('d/m/Y', strtotime($purchase->purchase_date)) }}
+                    @else
+                      Não pago
+                    @endif
                   </td>
                   <td>
                     <form action="{{ route('student.purchases.destroy', $purchase->id) }}" method="post">
@@ -78,11 +82,13 @@
                 </tr>
               @empty
                 <tr>
-                  <td colspan="4" class="text-danger fw-bold">Este aluno não possui nenhum curso</td>
+                  <td colspan="6" class="text-danger fw-bold">Este aluno não possui nenhum curso</td>
                 </tr>
               @endforelse
             </tbody>
           </table>
+          <a href="{{ route('student.pdf', $student->id) }}" class="btn btn-sm btn-success">Exportar PDF</a>
+          <a href="{{ route('student.excel', $student->id) }}" class="btn btn-sm btn-success">Export XLS</a>
         </div>
       </div>
     </div>

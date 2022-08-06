@@ -31,4 +31,21 @@ class PdfController extends Controller
 
         return $pdf->download('relatório.pdf');
     }
+
+    public function studentPdf($id)
+    {
+        $student = Student::find($id);
+
+        if (!$student) {
+            return back()->withErrors(['Aluno não encontrado']);
+        }
+
+        $data = [
+            'student' => $student
+        ];
+
+        $pdf = PDF::loadView('studentfile', $data);
+
+        return $pdf->download('realatório-aluno.pdf');
+    }
 }

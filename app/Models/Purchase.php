@@ -13,7 +13,8 @@ class Purchase extends Model
         'student_id',
         'course_id',
         'paid_out',
-        'price'
+        'purchase_price',
+        'purchase_date'
     ];
 
     public function student()

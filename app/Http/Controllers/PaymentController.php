@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -18,10 +19,22 @@ class PaymentController extends Controller
         $this->middleware('check_user_type:Usuário');
     }
 
-    public function paymentViaTicket()
+    public function paymentViaTicket($id)
     {
-        $price = 0;
-        $description = "Pagamento dos cursos no valor de R$ " . $price;
+        $purchase = Purchase::find($id);
+
+        if (!$purchase || $purchase->paid_out || $purchase->student->user->id != Auth::id()) {
+            return back()->withErrors(['Compra não encontrado.']);
+        }
+        //Quando o usuário requisitar a compra do curso o preço da compra será atualizado para o valor atual do curso
+        //e a data de compra será atualizada para a data atual
+        $purchase->update([
+            'purchase_price' => $purchase->course->price,
+            'purchase_date' => now()
+        ]);
+
+        $description = "Pagamento do curso " . $purchase->course->name . " no valor de R$ " . $purchase->purchase_price;
+
         $json = Http::withHeaders([
             "Authorization" => "0D84518F5F6B4EC0B5DB5565938FF0F4",
             "Content-Type" => "application/json"
@@ -29,7 +42,7 @@ class PaymentController extends Controller
             'reference_id' => sha1(rand(0, time()) . time()),
             'description' =>  $description,
             'amount' => [
-                'value' => $price,
+                'value' => $purchase->purchase_price * 100,
                 'currency' => 'BRL'
             ],
             'payment_method' => [

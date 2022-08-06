@@ -17,7 +17,6 @@ class PurchaseController extends Controller
     public function studentPurchases($id)
     {
         $student = Student::find($id);
-        $courses = Course::where('', 'subscribers_quantity');
         $courses = Course::where('current_subscribers', '<', 'subscribers_quantity')
             ->where('end_date', '>', now())->get()->sortDesc();
 
@@ -43,19 +42,18 @@ class PurchaseController extends Controller
         $allData = $request->all();
         $allData['student_id'] = $id;
 
-        $course = Course::find($allData['course_id']);
-
-        foreach ($student->purchases as $purchase) {
-            if ($purchase->course == $course)
-                return back()->withErrors(['O aluno ja possui esse curso']);
+        if ($student->purchases->firstWhere("course_id", $allData['course_id'])) {
+            return back()->withErrors(['O aluno ja possui esse curso']);
         }
 
         Purchase::create($allData);
+
+        $course = Course::find($allData['course_id']);
         $course->update([
             'current_subscribers' => $course->current_subscribers + 1
         ]);
 
-        return back()->with('success', 'Novo curso adicionado para o aluno ' . $student->user->name);
+        return back()->with('success', 'Novo curso adicionado para o aluno.');
     }
 
     public function deleteStudentPurchase($id)

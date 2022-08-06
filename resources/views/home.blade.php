@@ -10,29 +10,31 @@
             <p>
               Você {{ Auth::user()->student->category }}, {{ Auth::user()->name }} está inscrito nos seguintes cursos:
             </p>
-            @forelse (Auth::user()->student->courses as $item)
-              <h3>{{ $item->name }}</h3>
-              <h5>Descrição: </h5>
-              <p>{{ $item->description }}</p>
-              <p>Valor: R$ {{ $item->price }}</p>
-              @if (Auth::user()->student->paid_out)
-                <a href="{{ asset($item->file_name) }}" class="btn btn-sm btn-primary">
-                  Acessar material do curso
+            @forelse (Auth::user()->student->purchases->sortDesc() as $purchase)
+              <p class="fw-bold h3">{{ $purchase->course->name }}</p>
+              <p class="h5">Descrição: </p>
+              <p>{{ $purchase->course->description }}</p>
+              <p>Valor: R${{ $purchase->course->price }}</p>
+              @if ($purchase->paid_out)
+                <a 
+                  href="{{ asset($purchase->course->file_name) }}" 
+                  class="btn btn-primary mb-4"
+                  target="blank"
+                >
+                  Accessar material do curso
+                </a>
+              @else
+                <p class="text-danger">Realize o pagamento para ter acesso ao material do curso</p>
+                <a 
+                  href="{{ route('boleto', $purchase->id) }}"
+                  class="btn btn-primary mb-4"
+                >
+                  Pagar via boleto
                 </a>
               @endif
             @empty
-              <p class="text-danger">Você não está inscrito em nenhum curso</p>  
+              <p class="text-danger fw-bold fs-5">Você não possui nenhum curso</p>
             @endforelse
-            @if (!Auth::user()->student->paid_out)
-              <p class="text-danger fw-bold fs-6">Realize o pagamento para acessar o material do cursos</p>
-              <a 
-                class="btn btn-primary mt-2"
-                href="{{ route('boleto') }}"
-                target="blank"
-              >
-                Pagar via boleto
-              </a>  
-            @endif
           @else
             <a href="{{ url('cursos') }}" class="btn btn-primary">
               Acessar aba de Cursos

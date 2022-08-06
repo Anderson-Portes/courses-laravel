@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->boolean('paid_out')->default(false);
-            $table->float('price')->default(0);
+            $table->float('purchase_price')->default(0);
+            $table->timestamp('purchase_date')->nullable();
             $table->timestamps();
         });
     }

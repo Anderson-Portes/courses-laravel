@@ -33,10 +33,12 @@ Route::resource("cursos", CourseController::class);
 Route::resource("alunos", StudentController::class);
 
 Route::get('pdf', [PdfController::class, 'index'])->name('pdf');
+Route::get('/alunos/pdf/{id}', [PdfController::class, 'studentPdf'])->name('student.pdf');
 
 Route::get('excel', [ExcelController::class, 'index'])->name('excel');
+Route::get('/alunos/excel/{id}', [ExcelController::class, 'studentExcel'])->name('student.excel');
 
-Route::get('pagar-boleto', [PaymentController::class, 'paymentViaTicket'])->name('boleto');
+Route::get('pagar-boleto/{id}', [PaymentController::class, 'paymentViaTicket'])->name('boleto');
 
 Route::put('atualizar-status/{id}', [StudentController::class, 'updateStatus'])->name('status');
 
