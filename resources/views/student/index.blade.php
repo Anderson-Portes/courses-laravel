@@ -35,7 +35,7 @@
               <th scope="col">CPF</th>
               <th scope="col">Email</th>
               <th scope="col">UF</th>
-              <th scope="status">Status</th>
+              <th scope="status">Cursos</th>
               <th scope="col">Total</th>
               <th></th>
             </thead>
@@ -49,23 +49,12 @@
                   <td>{{ $item->user->email }}</td>
                   <td>{{ $item->address->state }}</td>
                   <td class="row-status">
-                    <form method="post" class="d-inline" action="{{ route('status', $item->id) }}">
-                      @csrf
-                      @method("PUT")
-                      <button type="submit" class="btn btn-sm">
-                        @if($item->paid_out) Pago @else Não pago @endif
-                      </button>
-                    </form>
+                    <a href="{{ route('student.purchases', $item->id) }}" class="btn btn-sm btn-primary">
+                      Ver cursos
+                    </a>
                   </td>
                   <td>
                     R$
-                    @php
-                      $price = 0;
-                      foreach ($item->courses as $course) {
-                        $price += $course->price;
-                      } 
-                      echo $price;
-                    @endphp
                   </td>
                   <td>
                     <a href="{{ url('alunos/'.$item->id.'/edit') }}" class="btn btn-sm btn-outline-success">
@@ -114,10 +103,9 @@
       const rowCategory = rows[i].querySelector('.row-category').textContent
       const rowName = rows[i].querySelector('.row-name').textContent
       const rowDate = rows[i].querySelector('.row-date').textContent
-      const rowStatus = rows[i].querySelector('.row-status').textContent
 
       if(rowCategory.includes(category)) {
-        if(rowName.includes(search) || rowDate.includes(search) || rowStatus.includes(search))
+        if(rowName.includes(search) || rowDate.includes(search))
           rows[i].classList.remove('d-none')
         else
           rows[i].classList.add('d-none')

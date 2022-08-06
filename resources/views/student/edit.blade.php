@@ -157,33 +157,19 @@
               <input type="text" name="number" class="form-control" required placeholder="Número"
                 value="{{ $student->address->number }}">
             </div>
-            <p class="text-primary">Cursos do estudante</p>
-            <ul>
-              @forelse ($student->courses as $course)
-              <li>{{ $course->name }}</li>
-              @empty
-                <li class="text-danger">O estudante não possui nenhum curso</li>
-              @endforelse
-            </ul>
-            <div class="input-group mb-2">
-              <label class="input-group-text" for="course_id">Cursos</label>
-              <select class="form-select" id="course_id" name="courses[]" multiple="">
-                @foreach ($courses as $course)
-                  <option 
-                    value="{{ $course->id }}"
-                  >
-                    {{ $course->name }}
-                  </option>
-                @endforeach
-              </select>
-            </div>
-            <p>Ctrl + botão direito para escolher mais de um curso</p>
             <div class="input-group mb-2">
               <label class="input-group-text" for="category">Categoria</label>
               <select class="form-select" id="category" required name="category">
-                <option value="Estudante">Estudante</option>
-                <option value="Profissional">Profissional</option>
-                <option value="Associado">Associado</option>
+                @foreach (['Estudante', 'Profissional', 'Associado'] as $category)
+                  <option 
+                    value="{{ $category }}"
+                    @if ($category === $student->category)
+                      selected
+                    @endif
+                  >
+                    {{ $category }}
+                  </option>
+                @endforeach
               </select>
             </div>
             <button type="submit" class="btn btn-primary">Editar Aluno</button>

@@ -21,9 +21,6 @@ class PaymentController extends Controller
     public function paymentViaTicket()
     {
         $price = 0;
-        foreach (Auth::user()->student->courses as $course) {
-            $price += $course->price;
-        }
         $description = "Pagamento dos cursos no valor de R$ " . $price;
         $json = Http::withHeaders([
             "Authorization" => "0D84518F5F6B4EC0B5DB5565938FF0F4",

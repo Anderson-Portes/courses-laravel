@@ -29,7 +29,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return view("student.index")->with("students", Student::all());
+        return view("student.index")->with("students", Student::all()->sortDesc());
     }
 
     /**
@@ -39,9 +39,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        $courses = Course::where("end_date", ">", Carbon::now())->where("current_subscribers", "<", "subscribers_quantity")
-            ->get();
-        return view('student.create', compact('courses'));
+        return view('student.create');
     }
 
     /**
@@ -82,37 +80,11 @@ class StudentController extends Controller
 
         $allData['address_id'] = $newAddress->id;
 
-        $student = Student::create($allData);
-
-        if (!isset($allData['courses'])) {
-            $allData['courses'] = [];
-        }
-
-        $student->courses()->attach($allData['courses']);
-
-        foreach ($student->courses as $course) {
-            $course->current_subscribers++;
-            $course->update();
-        }
+        Student::create($allData);
 
         return back()->with('success', 'Aluno adicionado com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateStatus($id)
-    {
-        $student = Student::find($id);
-        $student->update(
-            ['paid_out' => !$student->paid_out]
-        );
-
-        return back()->with('success', 'Status de pagamento modificado!');
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -122,9 +94,13 @@ class StudentController extends Controller
      */
     public function edit($id)
     {
-        $courses = Course::where("end_date", ">", Carbon::now())->where("current_subscribers", "<", "subscribers_quantity")
-            ->get();
-        return view("student.edit", compact('courses'))->with('student', Student::find($id));
+        $student = Student::find($id);
+
+        if (!$student) {
+            return back()->withErrors(['Aluno não encontrado.']);
+        }
+
+        return view("student.edit", compact('student'));
     }
 
     /**
@@ -161,9 +137,6 @@ class StudentController extends Controller
         $allData = $request->all();
         $allData['password'] = isset($allData['password']) ? Hash::make($allData['password']) : $student->user->password;
 
-        if (!isset($allData['courses'])) {
-            $allData['courses'] = [];
-        }
 
         $emailExists = User::firstWhere("email", $allData['email']);
         $cpfExists = Student::firstWhere("cpf", $allData['cpf']);
@@ -174,21 +147,6 @@ class StudentController extends Controller
 
         if ($cpfExists && $cpfExists->id != $id) {
             return back()->withErrors(['CPF Indísponível.']);
-        }
-
-        //Diminuindo o valor de inscritos atuais nos cursos do usuário
-        foreach ($student->courses as $course) {
-            $course->update(['current_subscribers' => $course->current_subscribers - 1]);
-        }
-
-        //Restando os cursos do usuário
-        $student->courses()->detach();
-        $student->courses()->attach($allData['courses']);
-
-        //Adicionando mais um inscrito nos novos cursos do usuário
-        foreach ($allData['courses'] as $newCourseId) {
-            $newCourse = Course::find($newCourseId);
-            $newCourse->update(['current_subscribers' => $newCourse->current_subscribers + 1]);
         }
 
         $student->update($allData);
@@ -209,10 +167,6 @@ class StudentController extends Controller
         $student = Student::find($id);
 
         if ($student) {
-            foreach ($student->courses as $course) {
-                $course->update(['current_subscribers' => $course->current_subscribers - 1]);
-            }
-
             User::destroy($student->user_id);
         }
 

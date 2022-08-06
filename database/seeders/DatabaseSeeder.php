@@ -102,8 +102,7 @@ class DatabaseSeeder extends Seeder
             'company' => 'Etec Doutora Ruth Cardoso',
             'address_id' => 1,
             'user_id' => 2,
-            'category' => 'Estudante',
-            'paid_out' => false
+            'category' => 'Estudante'
         ]);
     }
 }

@@ -25,7 +25,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        return view("course.index")->with("courses", Course::all());
+        return view("course.index")->with("courses", Course::all()->sortDesc());
     }
 
     /**
@@ -57,9 +57,11 @@ class CourseController extends Controller
         ]);
 
         $courseData = $request->all();
+
         $fileName = time() . $request->file('file')->getClientOriginalName();
         $filePath = $request->file('file')->storeAs('files', $fileName, 'public');
         $courseData['file_name'] = "/storage/" . $filePath;
+
         Course::create($courseData);
         return back()->with('success', 'Curso adicionado com sucesso.');
     }
@@ -84,9 +86,12 @@ class CourseController extends Controller
     public function edit($id)
     {
         $course = Course::find($id);
-        if ($course)
-            return view("course.edit", compact('course'));
-        return redirect("cursos");
+
+        if (!$course) {
+            return redirect("cursos");
+        }
+
+        return view("course.edit", compact('course'));
     }
 
     /**
@@ -98,37 +103,37 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required',
+            'description' => 'nullable|string',
+            'price' => 'required',
+            'start_date' => 'required|date|after:tomorrow',
+            'end_date' => 'required|date|after:start_date',
+            'subscribers_quantity' => 'required',
+            'file' => ['nullable', File::types(['pdf', 'docx', 'pptx'])]
+        ]);
+
         $course = Course::find($id);
-        if ($course) {
 
-            $request->validate([
-                'name' => 'required',
-                'description' => 'nullable|string',
-                'price' => 'required',
-                'start_date' => 'required|date|after:tomorrow',
-                'end_date' => 'required|date|after:start_date',
-                'subscribers_quantity' => 'required',
-                'file' => ['nullable', File::types(['pdf', 'docx', 'pptx'])]
-            ]);
+        if (!$course) {
+            return redirect("cursos");
+        }
 
-            $courseData = $request->all();
-            $courseExists = Course::where('name', $courseData['name'])->first();
+        $courseData = $request->all();
+        $courseExists = Course::firstWhere('name', $courseData['name']);
 
-            if (!$courseExists || $courseExists->id == $id) {
-
-                if ($request->file('file')) {
-                    $fileName = time() . $request->file('file')->getClientOriginalName();
-                    $filePath = $request->file('file')->storeAs('files', $fileName, 'public');
-                    $courseData['file_name'] = "/storage/" . $filePath;
-                }
-
-                $course->update($courseData);
-                return back()->with('success', 'Curso editado com sucesso.');
-            }
-
+        if ($courseExists && $courseExists->id != $id) {
             return back()->withErrors(['Este curso ja existe.']);
         }
-        return redirect("cursos");
+
+        if ($request->file('file')) {
+            $fileName = time() . $request->file('file')->getClientOriginalName();
+            $filePath = $request->file('file')->storeAs('files', $fileName, 'public');
+            $courseData['file_name'] = "/storage/" . $filePath;
+        }
+
+        $course->update($courseData);
+        return back()->with('success', 'Curso editado com sucesso.');
     }
 
     /**

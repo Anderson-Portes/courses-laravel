@@ -19,11 +19,6 @@ class Course extends Model
         "file_name"
     ];
 
-    public function students()
-    {
-        return $this->belongsToMany(Student::class, 'course_student');
-    }
-
     public function purchases()
     {
         return $this->hasMany(Purchase::class);

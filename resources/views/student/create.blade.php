@@ -158,15 +158,6 @@
                 value="{{ old('number') }}">
             </div>
             <div class="input-group mb-2">
-              <label class="input-group-text" for="course_id">Cursos</label>
-              <select class="form-select" id="course_id" name="courses[]" multiple="">
-                @foreach ($courses as $item)
-                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                @endforeach
-              </select>
-            </div>
-            <p>Ctrl + botão direito para escolher mais de um curso</p>
-            <div class="input-group mb-2">
               <label class="input-group-text" for="category">Categoria</label>
               <select class="form-select" id="category" required name="category">
                 <option value="Estudante">Estudante</option>

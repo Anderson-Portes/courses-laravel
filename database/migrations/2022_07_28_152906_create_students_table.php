@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('telephone')->nullable(true);
             $table->string('phone')->nullable(true);
             $table->enum('category', ['Estudante', 'Profissional', 'Associado']);
-            $table->boolean('paid_out')->default(false);
             $table->foreignId('address_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();

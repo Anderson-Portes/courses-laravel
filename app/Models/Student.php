@@ -15,8 +15,7 @@ class Student extends Model
         'company',
         'address_id',
         'user_id',
-        'category',
-        'paid_out'
+        'category'
     ];
 
     public function user()
@@ -27,11 +26,6 @@ class Student extends Model
     public function address()
     {
         return $this->belongsTo(Address::class);
-    }
-
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class, 'course_student');
     }
 
     public function purchases()
