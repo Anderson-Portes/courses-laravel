@@ -33,4 +33,9 @@ class Student extends Model
     {
         return $this->belongsToMany(Course::class, 'course_student');
     }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }
