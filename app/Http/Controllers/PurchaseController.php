@@ -11,7 +11,17 @@ class PurchaseController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check_user_type:Admin');
+        $this->middleware('check_user_type:Admin', [
+            'except' => [
+                'deleteStudentPurchase'
+            ]
+        ]);
+
+        $this->middleware('auth', [
+            'only' => [
+                'deleteStudentPurchase'
+            ]
+        ]);
     }
 
     public function studentPurchases($id)

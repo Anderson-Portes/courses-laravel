@@ -31,6 +31,11 @@
                 >
                   Pagar via boleto
                 </a>
+                <form action="{{ route('student.purchases.destroy', $purchase->id) }}" method="post" class="d-inline">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-danger mb-4">Cancelar Matricula</button>
+                </form>
               @endif
             @empty
               <p class="text-danger fw-bold fs-5">Você não possui nenhum curso</p>
