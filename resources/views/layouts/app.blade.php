@@ -65,6 +65,10 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{ url('alunos') }}">Alunos</a>
               </li>
+            @else
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('cart') }}">Carrinho</a>
+              </li>
             @endif
             <li class="nav-item dropdown">
               <a

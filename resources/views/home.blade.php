@@ -1,57 +1,38 @@
 @extends('layouts.app') 
 @section('content')
 <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
+  @if (session()->has('success'))
+    <div class="alert alert-success">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      {{ session()->get('success') }}
+    </div>
+  @endif
+  <div class="row">
+    @foreach ($courses as $course)
+      <div class="col col-md-6 col-lg-4 mt-2">
       <div class="card">
-        <div class="card-header">Sistema de Cursos</div>
+        <img src="{{ asset($course->photo_name) }}" class="card-img-top img-responsive" alt="{{ $course->name }}">
         <div class="card-body">
-          @if (Auth::user()->type === "Usuário")
-            <p>
-              Você {{ Auth::user()->student->category }}, {{ Auth::user()->name }} está inscrito nos seguintes cursos:
-            </p>
-            @forelse (Auth::user()->student->purchases->sortDesc() as $purchase)
-              <p class="fw-bold h3">{{ $purchase->course->name }}</p>
-              <p class="h5">Descrição: </p>
-              <p>{{ $purchase->course->description }}</p>
-              <p>Valor: R${{ $purchase->course->price }}</p>
-              @if ($purchase->paid_out)
-                <a 
-                  href="{{ asset($purchase->course->file_name) }}" 
-                  class="btn btn-primary mb-4"
-                  target="blank"
-                >
-                  Accessar material do curso
-                </a>
-              @else
-                <p class="text-danger">Realize o pagamento para ter acesso ao material do curso</p>
-                <a 
-                  href="{{ route('boleto', $purchase->id) }}"
-                  class="btn btn-primary mb-4"
-                >
-                  Pagar via boleto
-                </a>
-                <form action="{{ route('student.purchases.destroy', $purchase->id) }}" method="post" class="d-inline">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-danger mb-4">Cancelar Matricula</button>
-                </form>
-              @endif
-            @empty
-              <p class="text-danger fw-bold fs-5">Você não possui nenhum curso</p>
-            @endforelse
+          <h5 class="card-title">{{ $course->name }}</h5>
+          <p class="card-text">
+            {{ $course->description }}
+          </p>
+          @if (Auth::user()->type === "Usuário" && 
+            !Auth::user()->student?->purchases?->firstWhere("course_id",$course->id)
+          )
+            <form action="{{ route('cart.store', $course->id) }}" method="post">
+              @csrf
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-cart me-1"></i>Adicionar curso ao carrinho
+              </button>
+            </form>
           @else
-            <a href="{{ url('cursos') }}" class="btn btn-primary">
-              Acessar aba de Cursos
-            </a>
-            <br>
-            <a href="{{ url('alunos') }}" class="btn btn-primary mt-2">
-              Acessar aba de Alunos
-            </a>
+            <p class="text-danger fw-bold">Você não pode comprar esse curso</p>
           @endif
         </div>
       </div>
     </div>
+    @endforeach
   </div>
 </div>
 @endsection

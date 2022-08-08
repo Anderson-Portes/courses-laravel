@@ -93,7 +93,7 @@
                 value="{{ $course->end_date }}"
               >
             </div>
-            <div class="input-group mb-4">
+            <div class="input-group mb-2">
               <input 
                 type="file" 
                 class="form-control" 
@@ -102,7 +102,16 @@
               >
               <button class="btn btn-outline-secondary" type="button" id="file">Adicionar Arquivo</button>
             </div>
-            <button type="submit" class="btn btn-primary">Adicionar Curso</button>
+            <div class="input-group mb-4">
+              <input 
+                type="file" 
+                class="form-control" 
+                id="photo"
+                name="photo"
+              >
+              <button class="btn btn-outline-secondary" type="button" id="photo">Adicionar Foto</button>
+            </div>
+            <button type="submit" class="btn btn-primary">Editar Curso</button>
           </form>
         </div>
       </div>

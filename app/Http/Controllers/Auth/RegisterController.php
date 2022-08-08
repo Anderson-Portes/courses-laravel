@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
+use App\Models\Student;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,6 +56,17 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'cpf' => ['required', 'cpf', 'unique:students'],
+            'phone' => ['required', 'numeric'],
+            'telephone' => ['required', 'numeric'],
+            'company' => ['required', 'string', 'max:255'],
+            'category' => ['required', 'string'],
+            'city' => 'required|string',
+            'state' => 'required|string|max:2',
+            'district' => 'required|string',
+            'complement' => 'required|string',
+            'number' => 'required|string',
+            'cep' => 'required|numeric|min:8',
         ]);
     }
 
@@ -64,11 +78,32 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $address = Address::create([
+            'cep' => $data['cep'],
+            'state' => $data['state'],
+            'city' => $data['city'],
+            'district' => $data['district'],
+            'number' => $data['number'],
+            'complement' => $data['complement']
+        ]);
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'email_verified_at' => now()
+            'type' => 'Usuário'
         ]);
+
+        Student::create([
+            'cpf' => $data['cpf'],
+            'category' => $data['category'],
+            'company' => $data['company'],
+            'address_id' => $address->id,
+            'phone' => $data['phone'],
+            'telephone' => $data['telephone'],
+            'user_id' => $user->id
+        ]);
+
+        return $user;
     }
 }

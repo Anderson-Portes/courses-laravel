@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer("subscribers_quantity");
             $table->integer("current_subscribers")->default(0);
             $table->string("file_name");
+            $table->string("photo_name")->default('/storage/images/course.jpg');
             $table->timestamps();
         });
     }

@@ -2,82 +2,172 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <p>OBS: Todo o usuário cadastrado nessa página sera um admnistrador, para que seja possível testar as funções desse tipo de usuário</p>
       <div class="card">
         <div class="card-header">Cadastrar</div>
         <div class="card-body">
-          <form method="POST" action="{{ route('register') }}">
+          <form
+            action="{{ route('register') }}"
+            method="post"
+            enctype="multipart/form-data"
+          >
             @csrf
             <div class="form-floating mb-2">
-              <input 
-                type="text" 
-                class="form-control" 
-                id="name" 
+              <input
+                type="text"
+                class="form-control"
+                id="name"
                 name="name"
-                value="{{ old('name') }}"
                 required
-                autocomplete="name"
                 placeholder="Nome"
-              >
+                value="{{ old('name') }}"
+              />
               <label for="name">Nome</label>
             </div>
             <div class="form-floating mb-2">
-              <input 
-                type="email" 
-                class="form-control" 
-                id="email" 
+              <input
+                type="text"
+                class="form-control"
+                id="email"
                 name="email"
-                value="{{ old('email') }}"
                 required
-                autocomplete="email"
                 placeholder="Email"
-              >
+                value="{{ old('email') }}"
+              />
               <label for="email">Email</label>
             </div>
             <div class="form-floating mb-2">
-              <input 
-                type="password" 
-                class="form-control" 
-                id="password" 
+              <input
+                type="text"
+                class="form-control"
+                id="cpf"
+                name="cpf"
+                required
+                minlength="11"
+                maxlength="11"
+                placeholder="phone"
+                value="{{ old('cpf') }}"
+              />
+              <label for="cpf">CPF</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="phone"
+                name="phone"
+                placeholder="phone"
+                value="{{ old('phone') }}"
+              />
+              <label for="phone">Celular</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="telephone"
+                name="telephone"
+                placeholder="telephone"
+                value="{{ old('telephone') }}"
+              />
+              <label for="telephone">Telefone</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="text"
+                class="form-control"
+                id="company"
+                name="company"
+                autocomplete="company"
+                placeholder="Empresa"
+                value="{{ old('company') }}"
+              />
+              <label for="company">Empresa</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input
+                type="password"
+                class="form-control"
+                id="password"
                 name="password"
                 required
                 autocomplete="new-password"
                 placeholder="Senha"
-              >
+              />
               <label for="password">Senha</label>
             </div>
             <div class="form-floating mb-2">
-              <input 
-                type="password" 
-                class="form-control" 
-                id="password-confirm" 
+              <input
+                type="password"
+                class="form-control"
+                id="password-confirm"
                 name="password_confirmation"
                 required
                 autocomplete="new-password"
                 placeholder="Confirme Senha"
-              >
+              />
               <label for="password-confirm">Confirme Senha</label>
             </div>
-            <input name="type" hidden value="Admin">
-            <div class="form-check mb-4">
+            <div class="form-floating mb-2">
               <input
-                class="form-check-input"
-                type="checkbox"
-                name="remember"
-                id="remember"
-                />
-              <label class="form-check-label" for="remember">Lembre de mim</label>
+                type="text"
+                class="form-control"
+                id="cep"
+                name="cep"
+                required
+                autocomplete="new-password"
+                placeholder="CEP"
+                maxlength="8"
+                value="{{ old('cep') }}"
+              />
+              <label for="password-confirm">CEP</label>
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" name="city" class="form-control" placeholder="Cidade" required value="{{ old('city') }}">
+              <input type="text" name="state" maxlength="2" minlength="2" placeholder="Estado" class="form-control" required
+                value="{{ old('state') }}">
+              <input type="text" name="district" class="form-control" placeholder="Bairro" required
+                value="{{ old('district') }}">
+            </div>
+            <div class="input-group mb-2">
+              <input type="text" name="complement" class="form-control" required placeholder="Logradouro"
+                value="{{ old('complement') }}">
+              <input type="text" name="number" class="form-control" required placeholder="Número"
+                value="{{ old('number') }}">
+            </div>
+            <div class="input-group mb-2">
+              <label class="input-group-text" for="category">Categoria</label>
+              <select class="form-select" id="category" required name="category">
+                <option value="Estudante">Estudante</option>
+                <option value="Profissional">Profissional</option>
+                <option value="Associado">Associado</option>
+              </select>
             </div>
             @if ($errors->any())
               @foreach ($errors->all() as $item)
                 <p class="text-danger">{{ $item }}</p>
               @endforeach
             @endif
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <button type="submit" class="btn btn-primary">Criar Conta</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+<script>
+  const cepInput = document.getElementById('cep')
+
+  cepInput.onkeyup = async () => {
+    const cepValue = cepInput.value
+    if(cepValue.length === 8) {
+      const data = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
+      const json = await data.json()
+      console.log(json)
+      document.querySelector('input[name=state]').value = json.uf
+      document.querySelector('input[name=city]').value = json.localidade
+      document.querySelector('input[name=district]').value = json.bairro
+      document.querySelector("input[name=complement]").value = json.logradouro
+    }
+  }
+</script>
 @endsection

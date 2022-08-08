@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\PaymentController;
@@ -52,3 +53,6 @@ Route::delete('/alunos/cursos/{id}', [PurchaseController::class, 'deleteStudentP
   ->name('student.purchases.destroy');
 Route::put('/alunos/cursos/{id}', [PurchaseController::class, 'updateStudentPurchaseStatus'])
   ->name('student.purchases.update');
+
+Route::get('/carrinho', CartController::class)->name('cart');
+Route::post('/carrinho/{id}', [CartController::class, 'addCourseOnCart'])->name('cart.store');

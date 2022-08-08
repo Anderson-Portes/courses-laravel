@@ -15,7 +15,9 @@ class CourseController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('check_user_type:Admin');
+        $this->middleware('check_user_type:Admin', [
+            'except' => 'show'
+        ]);
     }
 
     /**
@@ -53,7 +55,8 @@ class CourseController extends Controller
             'start_date' => 'required|date|after:tomorrow',
             'end_date' => 'required|date|after:start_date',
             'subscribers_quantity' => 'required',
-            'file' => [File::types(['pdf', 'docx', 'pptx'])]
+            'file' => [File::types(['pdf', 'docx', 'pptx', 'zip'])],
+            'photo' => 'required|image'
         ]);
 
         $courseData = $request->all();
@@ -61,6 +64,10 @@ class CourseController extends Controller
         $fileName = time() . $request->file('file')->getClientOriginalName();
         $filePath = $request->file('file')->storeAs('files', $fileName, 'public');
         $courseData['file_name'] = "/storage/" . $filePath;
+
+        $photoName = time() . $request->file('photo')->getClientOriginalName();
+        $photoPath = $request->file('photo')->storeAs('images', $photoName, 'public');
+        $courseData['photo_name'] = "/storage/" . $photoPath;
 
         Course::create($courseData);
         return back()->with('success', 'Curso adicionado com sucesso.');
@@ -107,10 +114,11 @@ class CourseController extends Controller
             'name' => 'required',
             'description' => 'nullable|string',
             'price' => 'required',
-            'start_date' => 'required|date|after:tomorrow',
+            'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'subscribers_quantity' => 'required',
-            'file' => ['nullable', File::types(['pdf', 'docx', 'pptx'])]
+            'file' => ['nullable', File::types(['pdf', 'docx', 'pptx', 'zip'])],
+            'photo' => 'nullable|image'
         ]);
 
         $course = Course::find($id);
@@ -130,6 +138,12 @@ class CourseController extends Controller
             $fileName = time() . $request->file('file')->getClientOriginalName();
             $filePath = $request->file('file')->storeAs('files', $fileName, 'public');
             $courseData['file_name'] = "/storage/" . $filePath;
+        }
+
+        if ($request->file('photo')) {
+            $photoName = time() . $request->file('photo')->getClientOriginalName();
+            $photoPath = $request->file('photo')->storeAs('images', $photoName, 'public');
+            $courseData['photo_name'] = "/storage/" . $photoPath;
         }
 
         $course->update($courseData);

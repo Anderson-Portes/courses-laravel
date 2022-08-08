@@ -16,7 +16,8 @@ class Course extends Model
         "end_date",
         "subscribers_quantity",
         "current_subscribers",
-        "file_name"
+        "file_name",
+        "photo_name"
     ];
 
     public function purchases()
