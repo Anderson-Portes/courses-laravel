@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             'end_date' => '2022-08-15',
             'subscribers_quantity' => 32,
             'current_subscribers' => 0,
-            'file_name' => '/storage/files/Arquivo.pdf'
+            'file_name' => '/storage/files/Arquivo.pdf',
+            'photo_name' => '/storage/images/php.png'
         ]);
 
         Course::factory()->create([
@@ -44,7 +45,8 @@ class DatabaseSeeder extends Seeder
             'end_date' => '2022-08-20',
             'subscribers_quantity' => 38,
             'current_subscribers' => 0,
-            'file_name' => '/storage/files/Arquivo.pdf'
+            'file_name' => '/storage/files/Arquivo.pdf',
+            'photo_name' => '/storage/images/sql.png'
         ]);
 
         Course::factory()->create([
@@ -55,7 +57,8 @@ class DatabaseSeeder extends Seeder
             'end_date' => '2022-08-25',
             'subscribers_quantity' => 40,
             'current_subscribers' => 0,
-            'file_name' => '/storage/files/Arquivo.pdf'
+            'file_name' => '/storage/files/Arquivo.pdf',
+            'photo_name' => '/storage/images/java.png'
         ]);
 
         Course::factory()->create([
@@ -66,7 +69,8 @@ class DatabaseSeeder extends Seeder
             'end_date' => '2022-08-30',
             'subscribers_quantity' => 45,
             'current_subscribers' => 0,
-            'file_name' => '/storage/files/Arquivo.pdf'
+            'file_name' => '/storage/files/Arquivo.pdf',
+            'photo_name' => '/storage/images/python.png'
         ]);
 
         Course::factory()->create([
@@ -77,7 +81,8 @@ class DatabaseSeeder extends Seeder
             'end_date' => '2022-09-30',
             'subscribers_quantity' => 50,
             'current_subscribers' => 0,
-            'file_name' => '/storage/files/Arquivo.pdf'
+            'file_name' => '/storage/files/Arquivo.pdf',
+            'photo_name' => '/storage/images/ts.png'
         ]);
 
         Address::factory()->create([
